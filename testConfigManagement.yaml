@@ -6,6 +6,6 @@ spec:
   clusterName: test-anthos-1
   git:
     syncRepo: https://github.com/portworx/acm-test/
-    syncBranch: master
+    syncBranch: 1.0.0
     secretType: none
     policyDir: "config"
