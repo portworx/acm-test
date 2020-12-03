@@ -78,7 +78,7 @@ spec:
       hostPID: false
       containers:
         - name: portworx
-          image: portworx/oci-monitor:00794c1_aa515e5
+          image: portworx/oci-monitor:2.6.1.6
           imagePullPolicy: Always
           args:
             ["-c", "px-cluster-a8dd10fc-bcb5-4b1e-ad85-89d66db8b16e", "-s", "type=pd-standard,size=150", "-secret_type", "k8s", "-kvdb_dev", "type=pd-standard,size=150", "-b", 
