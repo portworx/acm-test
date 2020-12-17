@@ -79,15 +79,15 @@ spec:
       hostPID: false
       containers:
         - name: portworx
-          image: portworx/oci-monitor:84cb7b8_bf8e55c
+          image: portworx/oci-monitor:2.6.2
           imagePullPolicy: Always
           args:
-            ["-c", "px-cluster-5be68bc3-3b48-445b-bdcc-62d18a3e4e0c", "-s", "type=pd-standard,size=200", "-secret_type", "k8s", "-kvdb_dev", "type=pd-standard,size=150", "-b", 
+            ["-c", "px-cluster-5be68bc3-3b48-445b-bdcc-62d18a3e4e0c", "-s", "type=pd-standard,size=200", "-secret_type", "k8s", "-kvdb_dev", "type=pd-standard,size=150", "-b",
              "-x", "kubernetes"]
           env:
             - name: "PX_TEMPLATE_VERSION"
               value: "v4"
-            
+
           livenessProbe:
             periodSeconds: 30
             initialDelaySeconds: 840 # allow image pull in slow networks
