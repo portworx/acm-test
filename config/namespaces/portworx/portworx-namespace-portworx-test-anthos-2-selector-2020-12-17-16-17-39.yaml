@@ -1,0 +1,30 @@
+# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.12-gke.1504&b=true&s=%22type%3Dpd-standard%2Csize%3D200%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-5be68bc3-3b48-445b-bdcc-62d18a3e4e0c&acr=test-anthos-2-selector&stork=true&st=k8s
+---
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "test-anthos-2-selector"
+  name: px-role
+  namespace: portworx
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "create", "update", "patch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "test-anthos-2-selector"
+  name: px-role-binding
+  namespace: portworx
+subjects:
+- kind: ServiceAccount
+  name: px-account
+  namespace: kube-system
+roleRef:
+  kind: Role
+  name: px-role
+  apiGroup: rbac.authorization.k8s.io
