@@ -38,10 +38,6 @@ metadata:
     configmanagement.gke.io/cluster-selector: "test-anthos-2-selector"
   name: px-account
   namespace: kube-system
-roleRef:
-  kind: ClusterRole
-  name: node-get-put-list-role
-  apiGroup: rbac.authorization.k8s.io
 ---
 
 apiVersion: apps/v1
