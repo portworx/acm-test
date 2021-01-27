@@ -1,0 +1,335 @@
+# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679&acr=cluster-b-selector&stork=true&st=k8s
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: volumeplacementstrategies.portworx.io
+spec:
+  group: portworx.io
+  versions:
+    - name: v1beta2
+      served: true
+      storage: true
+    - name: v1beta1
+      served: false
+      storage: false
+  scope: Cluster
+  names:
+    plural: volumeplacementstrategies
+    singular: volumeplacementstrategy
+    kind: VolumePlacementStrategy
+    shortNames:
+    - vps
+    - vp
+  preserveUnknownFields: false
+  validation:
+    openAPIV3Schema:
+      type: object
+      required:
+      - spec
+      properties:
+        spec:
+          type: object
+          description: The desired spec of the volume placement strategy
+          properties:
+            replicaAffinity:
+              type: array
+              description: Allows you to specify a rule which creates an affinity for replicas within a volume
+              items:
+                type: object
+                properties:
+                  affected_replicas:
+                    type: integer
+                    description: The number of volume replicas affected by the replica affinity
+                  enforcement:
+                    type: string
+                    enum:
+                    - required
+                    - preferred
+                    description: Specifies if the given rule is required (hard) or preferred (soft)
+                  topologyKey:
+                    type: string
+                    minLength: 1
+                    description: Key for the node label that the system uses to denote a topology domain. The key can be for any node label that is present on the Kubernetes node.
+                  matchExpressions:
+                    description: Expression to use for the replica affinity rule
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          minLength: 1
+                        operator:
+                          type: string
+                          enum:
+                          - In
+                          - NotIn
+                          - Exists
+                          - DoesNotExist
+                          - Lt
+                          - Gt
+                          description: The logical operator to use for comparing the key and values in the match expression
+                        values:
+                          type: array
+                          items:
+                            type: string
+                      required:
+                      - key
+                      - operator
+            replicaAntiAffinity:
+              type: array
+              description: Allows you to specify a rule that creates an anti-affinity for replicas within a volume
+              items:
+                type: object
+                properties:
+                  affected_replicas:
+                    type: integer
+                    description: The number of volume replicas affected by the replica anti affinity
+                  enforcement:
+                    type: string
+                    enum:
+                    - required
+                    - preferred
+                    description: Specifies if the given rule is required (hard) or preferred (soft)
+                  topologyKey:
+                    type: string
+                    minLength: 1
+                    description: Key for the node label that the system uses to denote a topology domain. The key can be for any node label that is present on the Kubernetes node.
+                required:
+                - topologyKey
+            volumeAffinity:
+              type: array
+              description: Allows you to colocate volumes by specifying rules that place replicas of a volume together with those of another volume for which the specified labels match
+              items:
+                type: object
+                properties:
+                  enforcement:
+                    type: string
+                    enum:
+                    - required
+                    - preferred
+                    description: Specifies if the given rule is required (hard) or preferred (soft)
+                  topologyKey:
+                    type: string
+                    minLength: 1
+                    description: Key for the node label that the system uses to denote a topology domain. The key can be for any node label that is present on the Kubernetes node.
+                  matchExpressions:
+                    description: Expression to use for the volume affinity rule
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          minLength: 1
+                        operator:
+                          type: string
+                          enum:
+                          - In
+                          - NotIn
+                          - Exists
+                          - DoesNotExist
+                          - Lt
+                          - Gt
+                          description: The logical operator to use for comparing the key and values in the match expression
+                        values:
+                          type: array
+                          items:
+                            type: string
+                      required:
+                      - key
+                      - operator
+                required:
+                - matchExpressions
+            volumeAntiAffinity:
+              type: array
+              description: Allows you to specify dissociation rules between 2 or more volumes that match the given labels
+              items:
+                type: object
+                properties:
+                  enforcement:
+                    type: string
+                    enum:
+                    - required
+                    - preferred
+                    description: Specifies if the given rule is required (hard) or preferred (soft)
+                  topologyKey:
+                    type: string
+                    minLength: 1
+                    description: Key for the node label that the system uses to denote a topology domain. The key can be for any node label that is present on the Kubernetes node.
+                  matchExpressions:
+                    description: Expression to use for the volume anti affinity rule
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          minLength: 1
+                        operator:
+                          type: string
+                          enum:
+                          - In
+                          - NotIn
+                          - Exists
+                          - DoesNotExist
+                          - Lt
+                          - Gt
+                          description: The logical operator to use for comparing the key and values in the match expression
+                        values:
+                          type: array
+                          items:
+                            type: string
+                      required:
+                      - key
+                      - operator
+                required:
+                - matchExpressions
+---
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+  name: node-get-put-list-role
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["watch", "get", "update", "list"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["delete", "get", "list", "watch", "update"]
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims", "persistentvolumes"]
+  verbs: ["get", "list"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "update", "create"]
+- apiGroups: ["extensions"]
+  resources: ["podsecuritypolicies"]
+  resourceNames: ["privileged"]
+  verbs: ["use"]
+- apiGroups: ["portworx.io"]
+  resources: ["volumeplacementstrategies"]
+  verbs: ["get", "list"]
+- apiGroups: ["stork.libopenstorage.org"]
+  resources: ["backuplocations"]
+  verbs: ["get", "list"]
+- apiGroups: ["core.libopenstorage.org"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+  name: node-role-binding
+subjects:
+- kind: ServiceAccount
+  name: px-account
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: node-get-put-list-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+  name: portworx-pvc-controller-role
+rules:
+- apiGroups: [""]
+  resources: ["persistentvolumes"]
+  verbs: ["create","delete","get","list","update","watch"]
+- apiGroups: [""]
+  resources: ["persistentvolumes/status"]
+  verbs: ["update"]
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims"]
+  verbs: ["get", "list", "update", "watch"]
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims/status"]
+  verbs: ["update"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["create", "delete", "get", "list", "watch"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["endpoints", "services"]
+  verbs: ["create", "delete", "get", "update"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["watch", "create", "patch", "update"]
+- apiGroups: [""]
+  resources: ["serviceaccounts"]
+  verbs: ["get", "create"]
+- apiGroups: [""]
+  resources: ["serviceaccounts/token"]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "create", "update", "list", "watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+  name: portworx-pvc-controller-role-binding
+subjects:
+- kind: ServiceAccount
+  name: portworx-pvc-controller-account
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: portworx-pvc-controller-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+  name: autopilot-role
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+  name: autopilot-role-binding
+subjects:
+- kind: ServiceAccount
+  name: autopilot-account
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: autopilot-role
+  apiGroup: rbac.authorization.k8s.io

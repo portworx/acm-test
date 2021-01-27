@@ -1,10 +1,10 @@
-# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.12-gke.1504&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-a8dd10fc-bcb5-4b1e-ad85-89d66db8b16e&acr=test-anthos-1-selector&stork=true&st=k8s
+# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679&acr=cluster-b-selector&stork=true&st=k8s
 ---
 kind: Service
 apiVersion: v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: portworx-service
   namespace: kube-system
   labels:
@@ -35,10 +35,11 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: px-account
   namespace: kube-system
 ---
+
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -47,8 +48,8 @@ metadata:
   labels:
     name: portworx
   annotations:
-    portworx.com/install-source: "https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.12-gke.1504&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-a8dd10fc-bcb5-4b1e-ad85-89d66db8b16e&acr=test-anthos-1-selector&stork=true&st=k8s"
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    portworx.com/install-source: "https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679&acr=cluster-b-selector&stork=true&st=k8s"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
 spec:
   selector:
     matchLabels:
@@ -78,10 +79,10 @@ spec:
       hostPID: false
       containers:
         - name: portworx
-          image: portworx/oci-monitor:2.6.1.6
+          image: portworx/oci-monitor:2.6.3
           imagePullPolicy: Always
           args:
-            ["-c", "px-cluster-a8dd10fc-bcb5-4b1e-ad85-89d66db8b16e", "-s", "type=pd-standard,size=150", "-secret_type", "k8s", "-kvdb_dev", "type=pd-standard,size=150", "-b", 
+            ["-c", "px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679", "-s", "type=pd-standard,size=150", "-secret_type", "k8s", "-kvdb_dev", "type=pd-standard,size=150", "-b", 
              "-x", "kubernetes"]
           env:
             - name: "PX_TEMPLATE_VERSION"
@@ -176,7 +177,7 @@ metadata:
   name: portworx-api
   namespace: kube-system
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   labels:
     name: portworx-api
 spec:
@@ -205,7 +206,7 @@ metadata:
   labels:
     name: portworx-api
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
 spec:
   selector:
     matchLabels:
@@ -250,7 +251,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: portworx-pvc-controller-account
   namespace: kube-system
 ---
@@ -259,7 +260,7 @@ kind: Deployment
 metadata:
   annotations:
     scheduler.alpha.kubernetes.io/critical-pod: ""
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   labels:
     tier: control-plane
   name: portworx-pvc-controller
@@ -302,7 +303,7 @@ spec:
         - --use-service-account-credentials=true
         - --leader-elect-resource-lock=configmaps
         - --leader-elect-resource-name=portworx-pvc-controller
-        image: k8s.gcr.io/kube-controller-manager-amd64:v1.17.12
+        image: k8s.gcr.io/kube-controller-manager-amd64:v1.17.14
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 8
@@ -323,7 +324,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: autopilot-config
   namespace: kube-system
 data:
@@ -338,7 +339,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: autopilot-account
   namespace: kube-system
 ---
@@ -347,7 +348,7 @@ kind: Deployment
 metadata:
   annotations:
     scheduler.alpha.kubernetes.io/critical-pod: ""
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   labels:
     tier: control-plane
   name: autopilot
@@ -413,7 +414,7 @@ kind: Service
 metadata:
   name: autopilot
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   namespace: kube-system
   labels:
     name: autopilot-service

@@ -3,7 +3,7 @@ kind: ConfigManagement
 metadata:
   name: config-management
 spec:
-  clusterName: test-anthos-1
+  clusterName: cluster-a
   git:
     syncRepo: https://github.com/portworx/acm-test/
     syncBranch: 1.0.0

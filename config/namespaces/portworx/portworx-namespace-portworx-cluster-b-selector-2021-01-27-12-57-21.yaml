@@ -1,11 +1,11 @@
-# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.12-gke.1504&b=true&s=%22type%3Dpd-standard%2Csize%3D200%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-5be68bc3-3b48-445b-bdcc-62d18a3e4e0c&acr=test-anthos-2-selector&stork=true&st=k8s
+# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679&acr=cluster-b-selector&stork=true&st=k8s
 ---
 
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-2-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: px-role
   namespace: portworx
 rules:
@@ -17,7 +17,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-2-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: px-role-binding
   namespace: portworx
 subjects:

@@ -3,7 +3,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: px-role
   namespace: portworx
 rules:
@@ -15,7 +15,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
   name: px-role-binding
   namespace: portworx
 subjects:
