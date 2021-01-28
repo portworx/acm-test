@@ -1,8 +1,0 @@
----
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  annotations:
-    configmanagement.gke.io/cluster-selector: "test-anthos-1-selector"
-  name: stork-snapshot-sc
-provisioner: stork-snapshot
