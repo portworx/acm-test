@@ -6,6 +6,6 @@ spec:
   clusterName: cluster-a
   git:
     syncRepo: https://github.com/portworx/acm-test/
-    syncBranch: 1.0.0
+    syncBranch: esstest
     secretType: none
     policyDir: "config"

@@ -1,10 +1,10 @@
-# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679&acr=cluster-b-selector&stork=true&st=k8s
+# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&oem=esse&user=2d431cbc-151f-11eb-bbaa-32b4258e357f&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-5d9d44d2-81ca-41b4-98b5-c849e826bdbd&acr=cluster-a-selector&stork=true&lh=true&st=k8s
 ---
 kind: Service
 apiVersion: v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   name: portworx-service
   namespace: kube-system
   labels:
@@ -35,9 +35,21 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   name: px-account
   namespace: kube-system
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
+  name: px-essential
+  namespace: kube-system
+data:
+  px-essen-user-id: MmQ0MzFjYmMtMTUxZi0xMWViLWJiYWEtMzJiNDI1OGUzNTdm
+  px-osb-endpoint: aHR0cHM6Ly9tYXN0ZXItc3RhZ2luZy5wb3J0d29yeC5kZXYvL29zYi9iaWxsaW5nL3YxL3JlZ2lzdGVy
 ---
 
 apiVersion: apps/v1
@@ -48,8 +60,8 @@ metadata:
   labels:
     name: portworx
   annotations:
-    portworx.com/install-source: "https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679&acr=cluster-b-selector&stork=true&st=k8s"
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    portworx.com/install-source: "https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&oem=esse&user=2d431cbc-151f-11eb-bbaa-32b4258e357f&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-5d9d44d2-81ca-41b4-98b5-c849e826bdbd&acr=cluster-a-selector&stork=true&lh=true&st=k8s"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
 spec:
   selector:
     matchLabels:
@@ -82,7 +94,7 @@ spec:
           image: portworx/oci-monitor:2.6.3
           imagePullPolicy: Always
           args:
-            ["-c", "px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679", "-s", "type=pd-standard,size=150", "-secret_type", "k8s", "-kvdb_dev", "type=pd-standard,size=150", "-b", 
+            ["-c", "px-cluster-5d9d44d2-81ca-41b4-98b5-c849e826bdbd", "-s", "type=pd-standard,size=150", "-secret_type", "k8s", "-kvdb_dev", "type=pd-standard,size=150", "-b", "--oem", "esse", 
              "-x", "kubernetes"]
           env:
             - name: "PX_TEMPLATE_VERSION"
@@ -177,7 +189,7 @@ metadata:
   name: portworx-api
   namespace: kube-system
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   labels:
     name: portworx-api
 spec:
@@ -206,7 +218,7 @@ metadata:
   labels:
     name: portworx-api
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
 spec:
   selector:
     matchLabels:
@@ -251,7 +263,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   name: portworx-pvc-controller-account
   namespace: kube-system
 ---
@@ -260,7 +272,7 @@ kind: Deployment
 metadata:
   annotations:
     scheduler.alpha.kubernetes.io/critical-pod: ""
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   labels:
     tier: control-plane
   name: portworx-pvc-controller
@@ -321,10 +333,162 @@ spec:
       serviceAccountName: portworx-pvc-controller-account
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
+  name: px-lh-account
+  namespace: kube-system
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
+  name: px-lh-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list", "get"]
+  - apiGroups:
+        - extensions
+        - apps
+    resources:
+        - deployments
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create", "update"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "create", "update"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create", "get", "list", "watch"]
+  - apiGroups: ["stork.libopenstorage.org"]
+    resources: ["clusterpairs","migrations","groupvolumesnapshots"]
+    verbs: ["get", "list", "create", "update", "delete"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
+  name: px-lh-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: px-lh-account
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: px-lh-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
+  name: px-lighthouse
+  namespace: kube-system
+  labels:
+    tier: px-web-console
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+    - name: https
+      port: 443
+  selector:
+    tier: px-web-console
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
+  name: px-lighthouse
+  namespace: kube-system
+  labels:
+    tier: px-web-console
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      tier: px-web-console
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        tier: px-web-console
+    spec:
+      initContainers:
+      - name: config-init
+        image: portworx/lh-config-sync:latest
+        imagePullPolicy: Always
+        args:
+        - "init"
+        env:
+        - name: PX_SERVICE_TYPE
+          value: "NodePort"
+        volumeMounts:
+        - name: config
+          mountPath: /config/lh
+      containers:
+      - name: px-lighthouse
+        image: portworx/px-lighthouse:latest
+        imagePullPolicy: Always
+        args: [ "-kubernetes", "true" ]
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        readinessProbe:
+          httpGet:
+            path: /login
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /login
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 20
+        volumeMounts:
+        - name: config
+          mountPath: /config/lh
+      - name: config-sync
+        image: portworx/lh-config-sync:latest
+        imagePullPolicy: Always
+        args:
+        - "sync"
+        env:
+        - name: PX_SERVICE_TYPE
+          value: "NodePort"
+        volumeMounts:
+        - name: config
+          mountPath: /config/lh
+      - name: stork-connector
+        image: portworx/lh-stork-connector:latest
+        imagePullPolicy: Always
+      serviceAccountName: px-lh-account
+      volumes:
+      - name: config
+        emptyDir: {}
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   name: autopilot-config
   namespace: kube-system
 data:
@@ -339,7 +503,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   name: autopilot-account
   namespace: kube-system
 ---
@@ -348,7 +512,7 @@ kind: Deployment
 metadata:
   annotations:
     scheduler.alpha.kubernetes.io/critical-pod: ""
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   labels:
     tier: control-plane
   name: autopilot
@@ -414,7 +578,7 @@ kind: Service
 metadata:
   name: autopilot
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-a-selector"
   namespace: kube-system
   labels:
     name: autopilot-service

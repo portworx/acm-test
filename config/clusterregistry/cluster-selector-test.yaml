@@ -1,8 +1,8 @@
 kind: ClusterSelector
 apiVersion: configmanagement.gke.io/v1
 metadata:
-  name: test-anthos-1-selector
+  name: cluster-a-selector
 spec:
   selector:
     matchLabels:
-      env: test
+      env: test-a
