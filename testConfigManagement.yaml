@@ -3,9 +3,9 @@ kind: ConfigManagement
 metadata:
   name: config-management
 spec:
-  clusterName: cluster-a
+  clusterName: cluster-c
   git:
     syncRepo: https://github.com/portworx/acm-test/
-    syncBranch: 1.0.0
+    syncBranch: test
     secretType: none
     policyDir: "config"

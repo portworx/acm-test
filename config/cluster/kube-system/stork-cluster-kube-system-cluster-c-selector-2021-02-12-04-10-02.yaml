@@ -1,10 +1,10 @@
-# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679&acr=cluster-b-selector&stork=true&st=k8s
+# SOURCE: http://70.0.19.239:8080/2.6?mc=false&kbver=1.17.12-gke.1504&oem=esse&user=015c8ea2-660d-11eb-a2c5-c24e499c7467&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-d72c9578-7bb4-4b72-b8eb-f7f7a32419b5&stork=true&lh=true&st=k8s&acr=cluster-c-selector
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: stork-scheduler-role
 rules:
   - apiGroups: [""]
@@ -58,7 +58,7 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: stork-scheduler-role-binding
 subjects:
 - kind: ServiceAccount
@@ -73,7 +73,7 @@ kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: stork-snapshot-sc
 provisioner: stork-snapshot
 ---
@@ -81,7 +81,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: stork-role
 rules:
   - apiGroups: ["*"]
@@ -92,7 +92,7 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: stork-role-binding
 subjects:
 - kind: ServiceAccount

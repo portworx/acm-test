@@ -1,4 +1,4 @@
-# SOURCE: https://edge-install.portworx.com/2.6?mc=false&kbver=1.17.14-gke.400&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-14d8755c-4a43-4903-ac54-36b1c3ab9679&acr=cluster-b-selector&stork=true&st=k8s
+# SOURCE: http://70.0.19.239:8080/2.6?mc=false&kbver=1.17.12-gke.1504&oem=esse&user=015c8ea2-660d-11eb-a2c5-c24e499c7467&b=true&s=%22type%3Dpd-standard%2Csize%3D150%22&kd=type%3Dpd-standard%2Csize%3D150&c=px-cluster-d72c9578-7bb4-4b72-b8eb-f7f7a32419b5&stork=true&lh=true&st=k8s&acr=cluster-c-selector
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -193,7 +193,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: node-get-put-list-role
 rules:
 - apiGroups: [""]
@@ -235,7 +235,7 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: node-role-binding
 subjects:
 - kind: ServiceAccount
@@ -250,7 +250,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: portworx-pvc-controller-role
 rules:
 - apiGroups: [""]
@@ -297,7 +297,7 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: portworx-pvc-controller-role-binding
 subjects:
 - kind: ServiceAccount
@@ -312,7 +312,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: autopilot-role
 rules:
   - apiGroups: ["*"]
@@ -323,7 +323,7 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: "cluster-b-selector"
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
   name: autopilot-role-binding
 subjects:
 - kind: ServiceAccount
@@ -333,3 +333,51 @@ roleRef:
   kind: ClusterRole
   name: autopilot-role
   apiGroup: rbac.authorization.k8s.io
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
+  name: px-lh-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list", "get"]
+  - apiGroups:
+        - extensions
+        - apps
+    resources:
+        - deployments
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create", "update"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "create", "update"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create", "get", "list", "watch"]
+  - apiGroups: ["stork.libopenstorage.org"]
+    resources: ["clusterpairs","migrations","groupvolumesnapshots"]
+    verbs: ["get", "list", "create", "update", "delete"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: "cluster-c-selector"
+  name: px-lh-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: px-lh-account
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: px-lh-role
+  apiGroup: rbac.authorization.k8s.io
+---
