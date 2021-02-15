@@ -91,7 +91,7 @@ spec:
       hostPID: false
       containers:
         - name: portworx
-          image: portworx/oci-monitor:2.5.7
+          image: portworx/oci-monitor:2.6.3
           imagePullPolicy: Always
           args:
             ["-c", "px-cluster-d72c9578-7bb4-4b72-b8eb-f7f7a32419b5", "-s", "type=pd-standard,size=150", "-secret_type", "k8s", "-kvdb_dev", "type=pd-standard,size=150", "-b", "--oem", "esse", 
@@ -99,7 +99,12 @@ spec:
           env:
             - name: "PX_TEMPLATE_VERSION"
               value: "v4"
-            
+            - name: "PX_IMAGE"
+              value: "portworx/px-base-enterprise:2.6.4"
+            - name: "REGISTRY_USER"
+              value: "pwxbuild"
+            - name: "REGISTRY_PASS"
+              value: "fridaydemos"
           livenessProbe:
             periodSeconds: 30
             initialDelaySeconds: 840 # allow image pull in slow networks
